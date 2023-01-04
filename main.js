@@ -1,5 +1,5 @@
 const path = require("path");
-const { app, BrowserWindow, Menu } = require("electron");
+const { app, BrowserWindow, Menu, ipcMain } = require("electron");
 
 const isMac = process.platform === "darwin";
 const isDev = process.env.NODE_ENV !== "development";
@@ -10,6 +10,11 @@ function createWindow() {
     title: "Image Resizer",
     width: isDev ? 1000 : 500,
     height: 600,
+    webPreferences: {
+      contextIsolation: true,
+      nodeIntegration: true,
+      preload: path.join(__dirname, "preload.js"),
+    },
   });
 
   // open dev tools if dev env
@@ -85,6 +90,11 @@ const menu = [
       ]
     : []),
 ];
+
+//catch render resize request
+ipcMain.on('image:resize', (e, options) => {
+  console.log(options)
+})
 
 app.on("window-all-closed", () => {
   if (!isMac) {
