@@ -15,16 +15,14 @@
     <script src="renderer.js" defer></script>
     <title>Image Resizer</title>
   </head>
-  <body class="bg-teal-700">
-    <div
-      class="max-w-xl m-auto h-screen flex flex-col align-center justify-center"
-    >
-      <div class="flex flex-col w-full items-center justify-center bg-grey-lighter">
+  <body>
+    <main>
+      <div>
         <label
           class="w-64 flex flex-col items-center px-4 py-7 bg-white text-gray-500 rounded-lg shadow-lg tracking-wide uppercase border border-blue cursor-pointer hover:text-teal-800"
         >
           <img src="logo.svg" width="32" />
-          <span class="mt-2 leading-normal">Select an image to resize</span>
+          <span>Select an image to resize</span>
           <input id="img" type="file" class="hidden" />
         </label>
       </div>
@@ -67,6 +65,6 @@
       <p class="text-white text-lg text-center font-mono mt-6"><strong>File: </strong><span id="filename"></span></p>
       <!-- Delete hardcoded path -->
       <p class="text-white text-lg text-center font-mono mt-2"><strong>Output: </strong><span id="output-path">C:\\Users\brad\imageshrink</span></p>
-    </div>
+    </main>
   </body>
 </html>

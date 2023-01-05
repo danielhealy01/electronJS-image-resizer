@@ -800,3 +800,32 @@ video {
 .focus\:ring-offset-2:focus {
   --tw-ring-offset-width: 2px;
 }
+
+
+/* LIFE AFTER TAILWIND */
+
+html {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  min-height: 100vh;
+  min-width: 100vw;
+}
+
+main {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  min-width: 100vw;
+  min-height: 100vh;
+
+  background-image: url('../assets/1.png');
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+  
+}
