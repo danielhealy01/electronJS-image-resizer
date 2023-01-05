@@ -1,12 +1,21 @@
 const path = require("path");
-const { app, BrowserWindow, Menu, ipcMain } = require("electron");
+const os = require("os");
+const fs = require("fs");
+const { app, BrowserWindow, Menu, ipcMain, shell } = require("electron");
+const resizeImg = require("resize-img");
+
+process.env.NODE_ENV = "dev";
 
 const isMac = process.platform === "darwin";
-const isDev = process.env.NODE_ENV !== "development";
+const isDev = process.env.NODE_ENV !== "prod";
+
+console.log(isDev)
+
+let mainWindow;
 
 // create main window
 function createWindow() {
-  const mainWindow = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     title: "Image Resizer",
     width: isDev ? 1000 : 500,
     height: 600,
@@ -43,6 +52,8 @@ app.whenReady().then(() => {
 
   const mainMenu = Menu.buildFromTemplate(menu);
   Menu.setApplicationMenu(mainMenu);
+
+  mainWindow.on("closed", () => (mainWindow = null));
 
   app.on("activate", () => {
     if (BrowserWindow.getAllWindows().length === 0) {
@@ -92,9 +103,40 @@ const menu = [
 ];
 
 //catch render resize request
-ipcMain.on('image:resize', (e, options) => {
-  console.log(options)
-})
+ipcMain.on("image:resize", (e, options) => {
+  options.dest = path.join(os.homedir(), "imageResizer");
+  resizeImage(options);
+});
+
+// resize the image
+async function resizeImage({ imgPath, width, height, dest }) {
+  try {
+    const newPath = await resizeImg(fs.readFileSync(imgPath), {
+      width: +width,
+      height: +height,
+      //cast string to number with +
+    });
+    const fileName = path.basename(imgPath);
+
+    //create dest folder if !exist
+    if (!fs.existsSync(dest)) {
+      fs.mkdirSync(dest);
+    }
+
+    //write file to dest
+    fs.writeFileSync(path.join(dest, fileName), newPath);
+
+    //send success to renderer
+    mainWindow.webContents.send("image:done");
+
+    //open dest folder to view
+    shell.openPath(dest);
+  } catch (error) {
+    console.log(error);
+  }
+}
+
+
 
 app.on("window-all-closed", () => {
   if (!isMac) {
